@@ -8,7 +8,6 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "habit_logs")
 @Data
-
 public class HabitLog {
 
     @Id

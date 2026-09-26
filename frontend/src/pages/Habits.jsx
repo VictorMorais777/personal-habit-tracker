@@ -10,6 +10,9 @@ function Habits() {
     frequencyType: "DAILY",
   });
   const [error, setError] = useState(null);
+  const [checkedToday, setCheckedToday] = useState({});
+
+  const today = new Date().toISOString().split("T")[0]; // formato YYYY-MM-DD
 
   async function loadHabits(id) {
     if (!id) return;
@@ -44,6 +47,18 @@ function Habits() {
       });
       setForm({ name: "", description: "", frequencyType: "DAILY" });
       loadHabits(userId);
+    } catch (err) {
+      setError(err.response?.data?.message || err.message);
+    }
+  }
+
+  async function handleCheckIn(habitId) {
+    try {
+      await api.post(`/habits/${habitId}/logs`, {
+        date: today,
+        completed: true,
+      });
+      setCheckedToday({ ...checkedToday, [habitId]: true });
     } catch (err) {
       setError(err.response?.data?.message || err.message);
     }
@@ -93,6 +108,12 @@ function Habits() {
           <li key={habit.id}>
             <strong>{habit.name}</strong> — {habit.frequencyType}
             {habit.description && <p>{habit.description}</p>}
+            <button
+              onClick={() => handleCheckIn(habit.id)}
+              disabled={checkedToday[habit.id]}
+            >
+              {checkedToday[habit.id] ? "✅ Feito hoje" : "Marcar como feito hoje"}
+            </button>
           </li>
         ))}
       </ul>

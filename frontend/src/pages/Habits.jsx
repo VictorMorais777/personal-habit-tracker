@@ -12,7 +12,7 @@ function Habits() {
   const [error, setError] = useState(null);
   const [checkedToday, setCheckedToday] = useState({});
 
-  const today = new Date().toISOString().split("T")[0]; // formato YYYY-MM-DD
+  const today = new Date().toISOString().split("T")[0];
 
   async function loadHabits(id) {
     if (!id) return;
@@ -20,9 +20,29 @@ function Habits() {
       const response = await api.get(`/habits/user/${id}`);
       setHabits(response.data);
       setError(null);
+      loadTodayStatus(response.data);
     } catch (err) {
       setError(err.message);
     }
+  }
+
+  async function loadTodayStatus(habitList) {
+    const statusMap = {};
+
+    await Promise.all(
+      habitList.map(async (habit) => {
+        try {
+          const response = await api.get(`/habits/${habit.id}/logs`);
+          const logs = response.data;
+          const todayLog = logs.find((log) => log.date === today);
+          statusMap[habit.id] = todayLog ? todayLog.completed : false;
+        } catch {
+          statusMap[habit.id] = false;
+        }
+      })
+    );
+
+    setCheckedToday(statusMap);
   }
 
   useEffect(() => {

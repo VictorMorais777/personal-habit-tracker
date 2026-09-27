@@ -7,6 +7,7 @@ function LandingPage() {
         <h1>Saturn Habit Tracker</h1>
         <nav>
           <Link to="/login">Entrar</Link>
+          {" | "}
           <Link to="/register">Criar conta</Link>
         </nav>
       </header>

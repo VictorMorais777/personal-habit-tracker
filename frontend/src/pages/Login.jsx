@@ -1,16 +1,28 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import api from "../services/api";
+import { saveAuth } from "../services/auth";
 
 function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   function handleChange(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
-    console.log("Login ainda não implementado:", form);
+    setError(null);
+
+    try {
+      const response = await api.post("/auth/login", form);
+      saveAuth(response.data);
+      navigate("/habits");
+    } catch (err) {
+      setError(err.response?.data?.message || "Email ou senha inválidos");
+    }
   }
 
   return (
@@ -27,9 +39,7 @@ function Login() {
         </div>
         <button type="submit">Entrar</button>
       </form>
-      <p>
-        Não tem conta? <Link to="/register">Cadastre-se</Link>
-      </p>
+      {error && <p style={{ color: "red" }}>{error}</p>}
     </div>
   );
 }

@@ -1,10 +1,12 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import api from "../services/api";
+import { saveAuth } from "../services/auth";
 
 function Register() {
   const [form, setForm] = useState({ name: "", email: "", password: "" });
-  const [message, setMessage] = useState(null);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   function handleChange(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -12,13 +14,12 @@ function Register() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    setMessage(null);
     setError(null);
 
     try {
-      await api.post("/users", form);
-      setMessage("Usuário criado com sucesso!");
-      setForm({ name: "", email: "", password: "" });
+      const response = await api.post("/auth/register", form);
+      saveAuth(response.data);
+      navigate("/habits");
     } catch (err) {
       setError(err.response?.data?.message || err.message);
     }
@@ -42,8 +43,6 @@ function Register() {
         </div>
         <button type="submit">Cadastrar</button>
       </form>
-
-      {message && <p style={{ color: "green" }}>{message}</p>}
       {error && <p style={{ color: "red" }}>{error}</p>}
     </div>
   );

@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import api from "../services/api";
+import { getUserId } from "../services/auth";
 
 function Habits() {
-  const [userId, setUserId] = useState("");
+  const userId = getUserId();
   const [habits, setHabits] = useState([]);
   const [form, setForm] = useState({
     name: "",

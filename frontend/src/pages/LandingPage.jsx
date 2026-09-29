@@ -4,7 +4,7 @@ function LandingPage() {
   return (
     <div>
       <header>
-        <h1>Saturn Habit Tracker</h1>
+       <h1 className="text-4xl font-bold text-blue-600">Saturn Habit Tracker</h1>
         <nav>
           <Link to="/login">Entrar</Link>
           {" | "}

@@ -3,6 +3,7 @@ import LandingPage from "./pages/LandingPage";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Habits from "./pages/Habits";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
@@ -11,7 +12,14 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/habits" element={<Habits />} />
+        <Route
+          path="/habits"
+          element={
+            <ProtectedRoute>
+              <Habits />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </BrowserRouter>
   );

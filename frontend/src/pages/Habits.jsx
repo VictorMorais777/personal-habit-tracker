@@ -15,10 +15,9 @@ function Habits() {
 
   const today = new Date().toISOString().split("T")[0];
 
-  async function loadHabits(id) {
-    if (!id) return;
+  async function loadHabits() {
     try {
-      const response = await api.get(`/habits/user/${id}`);
+      const response = await api.get(`/habits/user/${userId}`);
       setHabits(response.data);
       setError(null);
       loadTodayStatus(response.data);
@@ -47,8 +46,8 @@ function Habits() {
   }
 
   useEffect(() => {
-    loadHabits(userId);
-  }, [userId]);
+    loadHabits();
+  }, []);
 
   function handleFormChange(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -56,10 +55,6 @@ function Habits() {
 
   async function handleCreateHabit(e) {
     e.preventDefault();
-    if (!userId) {
-      setError("Informe um User ID primeiro");
-      return;
-    }
 
     try {
       await api.post("/habits", {
@@ -67,7 +62,7 @@ function Habits() {
         user: { id: Number(userId) },
       });
       setForm({ name: "", description: "", frequencyType: "DAILY" });
-      loadHabits(userId);
+      loadHabits();
     } catch (err) {
       setError(err.response?.data?.message || err.message);
     }
@@ -88,16 +83,6 @@ function Habits() {
   return (
     <div>
       <h1>Meus Hábitos</h1>
-
-      <div>
-        <label>User ID (temporário, até termos login)</label>
-        <input
-          type="number"
-          value={userId}
-          onChange={(e) => setUserId(e.target.value)}
-          placeholder="Ex: 1"
-        />
-      </div>
 
       <h2>Criar novo hábito</h2>
       <form onSubmit={handleCreateHabit}>

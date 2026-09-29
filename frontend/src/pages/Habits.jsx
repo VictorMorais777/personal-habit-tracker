@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import api from "../services/api";
-import { getUserId } from "../services/auth";
+import { getUserId, logout } from "../services/auth";
 
 function Habits() {
   const userId = getUserId();
+  const navigate = useNavigate();
   const [habits, setHabits] = useState([]);
   const [form, setForm] = useState({
     name: "",
@@ -80,9 +82,17 @@ function Habits() {
     }
   }
 
+  function handleLogout() {
+    logout();
+    navigate("/login");
+  }
+
   return (
     <div>
-      <h1>Meus Hábitos</h1>
+      <header style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <h1>Meus Hábitos</h1>
+        <button onClick={handleLogout}>Sair</button>
+      </header>
 
       <h2>Criar novo hábito</h2>
       <form onSubmit={handleCreateHabit}>

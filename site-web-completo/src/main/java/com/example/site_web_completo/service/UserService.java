@@ -1,6 +1,7 @@
 package com.example.site_web_completo.service;
 
 import com.example.site_web_completo.model.User;
+import com.example.site_web_completo.model.dto.ProfileUpdateRequest;
 import com.example.site_web_completo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -36,6 +37,21 @@ public class UserService {
     }
 
     public User save(User user) {
+        return userRepository.save(user);
+    }
+
+    public User updateProfile(Long userId, ProfileUpdateRequest request) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+
+        user.setBio(request.bio());
+        user.setLocation(request.location());
+        user.setMainGoal(request.mainGoal());
+        user.setInstagramUrl(request.instagramUrl());
+        user.setTwitterUrl(request.twitterUrl());
+        user.setLinkedinUrl(request.linkedinUrl());
+        user.setGithubUrl(request.githubUrl());
+
         return userRepository.save(user);
     }
 

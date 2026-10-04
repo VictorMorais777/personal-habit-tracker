@@ -1,6 +1,7 @@
 package com.example.site_web_completo.controller;
 
 import com.example.site_web_completo.model.User;
+import com.example.site_web_completo.model.dto.ProfileUpdateRequest;
 import com.example.site_web_completo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -39,6 +40,15 @@ public class UserController {
         }
         user.setId(id);
         return ResponseEntity.ok(userService.save(user));
+    }
+
+    @PutMapping("/{id}/profile")
+    public ResponseEntity<User> updateProfile(
+            @PathVariable Long id,
+            @RequestBody ProfileUpdateRequest request
+    ) {
+        User updated = userService.updateProfile(id, request);
+        return ResponseEntity.ok(updated);
     }
 
     @DeleteMapping("/{id}")

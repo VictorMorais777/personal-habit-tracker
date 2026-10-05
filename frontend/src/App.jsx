@@ -10,25 +10,11 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-          <Route
-            path="/profile"
-            element={
-              <ProtectedRoute>
-                <Profile />
-              </ProtectedRoute>
-            }
-          />
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route
-          path="/habits"
-          element={
-            <ProtectedRoute>
-              <Habits />
-            </ProtectedRoute>
-          }
-        />
+        <Route path="/habits" element={<ProtectedRoute><Habits /></ProtectedRoute>} />
+        <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
       </Routes>
     </BrowserRouter>
   );

@@ -84,6 +84,12 @@ function Habits() {
     <div className="min-h-screen bg-black text-white px-4 py-8">
       <div className="max-w-3xl mx-auto">
         <header className="flex items-center justify-between mb-8">
+            <button
+              onClick={() => navigate("/profile")}
+              className="px-4 py-2 rounded-lg bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 transition text-sm"
+            >
+              Meu Perfil
+            </button>
           <h1 className="text-3xl font-bold">
             🪐 Meus <span className="text-orange-500">Hábitos</span>
           </h1>

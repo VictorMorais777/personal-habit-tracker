@@ -46,4 +46,9 @@ public class HabitController {
         habitService.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/user/{userId}/public")
+    public List<Habit> listPublicByUser(@PathVariable Long userId) {
+        return habitService.listPublicByUser(userId);
+    }
 }

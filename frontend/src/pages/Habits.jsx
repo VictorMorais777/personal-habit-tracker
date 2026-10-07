@@ -11,6 +11,7 @@ function Habits() {
     name: "",
     description: "",
     frequencyType: "DAILY",
+    isPublic: false,
   });
   const [error, setError] = useState(null);
   const [checkedToday, setCheckedToday] = useState({});
@@ -53,11 +54,15 @@ function Habits() {
     setForm({ ...form, [e.target.name]: e.target.value });
   }
 
+  function handleCheckboxChange(e) {
+    setForm({ ...form, isPublic: e.target.checked });
+  }
+
   async function handleCreateHabit(e) {
     e.preventDefault();
     try {
       await api.post("/habits", { ...form, user: { id: Number(userId) } });
-      setForm({ name: "", description: "", frequencyType: "DAILY" });
+      setForm({ name: "", description: "", frequencyType: "DAILY", isPublic: false });
       loadHabits();
     } catch (err) {
       setError(err.response?.data?.message || err.message);
@@ -84,12 +89,12 @@ function Habits() {
     <div className="min-h-screen bg-black text-white px-4 py-8">
       <div className="max-w-3xl mx-auto">
         <header className="flex items-center justify-between mb-8">
-            <button
-              onClick={() => navigate("/profile")}
-              className="px-4 py-2 rounded-lg bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 transition text-sm"
-            >
-              Meu Perfil
-            </button>
+          <button
+            onClick={() => navigate("/profile")}
+            className="px-4 py-2 rounded-lg bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 transition text-sm"
+          >
+            Meu Perfil
+          </button>
           <h1 className="text-3xl font-bold">
             🪐 Meus <span className="text-orange-500">Hábitos</span>
           </h1>
@@ -136,7 +141,21 @@ function Habits() {
                 <option value="CUSTOM">Personalizado</option>
               </select>
             </div>
-            <div className="flex items-end">
+
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="isPublic"
+                checked={form.isPublic}
+                onChange={handleCheckboxChange}
+                className="w-4 h-4 accent-orange-500"
+              />
+              <label htmlFor="isPublic" className="text-sm text-zinc-400">
+                Tornar esse hábito público
+              </label>
+            </div>
+
+            <div className="flex items-end md:col-span-2">
               <button
                 type="submit"
                 className="w-full py-2 bg-orange-500 hover:bg-orange-400 text-black rounded-lg font-semibold transition shadow-[0_0_20px_rgba(249,115,22,0.3)]"
@@ -165,6 +184,15 @@ function Habits() {
                   <strong className="text-lg">{habit.name}</strong>
                   <span className="text-xs px-2 py-1 rounded-full bg-zinc-900 border border-zinc-700 text-zinc-300">
                     {frequencyLabels[habit.frequencyType]}
+                  </span>
+                  <span
+                    className={`text-xs px-2 py-1 rounded-full border ${
+                      habit.isPublic
+                        ? "bg-orange-500/10 text-orange-400 border-orange-500/30"
+                        : "bg-zinc-900 text-zinc-400 border-zinc-700"
+                    }`}
+                  >
+                    {habit.isPublic ? "Público" : "Privado"}
                   </span>
                 </div>
                 {habit.description && (

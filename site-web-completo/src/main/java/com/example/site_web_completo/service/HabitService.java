@@ -29,4 +29,8 @@ public class HabitService {
     public void delete(Long id) {
         habitRepository.deleteById(id);
     }
+
+    public List<Habit> listPublicByUser(Long userId) {
+        return habitRepository.findByUserIdAndIsPublicTrue(userId);
+    }
 }

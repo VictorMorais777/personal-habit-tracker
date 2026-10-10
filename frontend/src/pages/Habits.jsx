@@ -13,6 +13,8 @@ function Habits() {
     frequencyType: "DAILY",
     isPublic: false,
   });
+  const [editingId, setEditingId] = useState(null);
+  const [editForm, setEditForm] = useState(null);
   const [error, setError] = useState(null);
   const [checkedToday, setCheckedToday] = useState({});
 
@@ -69,6 +71,52 @@ function Habits() {
     }
   }
 
+  function startEdit(habit) {
+    setEditingId(habit.id);
+    setEditForm({
+      name: habit.name,
+      description: habit.description || "",
+      frequencyType: habit.frequencyType,
+      isPublic: !!habit.isPublic,
+    });
+  }
+
+  function cancelEdit() {
+    setEditingId(null);
+    setEditForm(null);
+  }
+
+  function handleEditChange(e) {
+    setEditForm({ ...editForm, [e.target.name]: e.target.value });
+  }
+
+  function handleEditCheckbox(e) {
+    setEditForm({ ...editForm, isPublic: e.target.checked });
+  }
+
+  async function handleUpdateHabit(e) {
+    e.preventDefault();
+    try {
+      await api.put(`/habits/${editingId}`, editForm);
+      cancelEdit();
+      loadHabits();
+    } catch (err) {
+      setError(err.response?.data?.message || err.message);
+    }
+  }
+
+  async function handleDelete(habitId) {
+    if (!window.confirm("Excluir este hábito e todo o histórico dele? Essa ação não pode ser desfeita.")) {
+      return;
+    }
+    try {
+      await api.delete(`/habits/${habitId}`);
+      loadHabits();
+    } catch (err) {
+      setError(err.response?.data?.message || err.message);
+    }
+  }
+
   async function handleCheckIn(habitId) {
     try {
       await api.post(`/habits/${habitId}/logs`, { date: today, completed: true });
@@ -84,6 +132,8 @@ function Habits() {
   }
 
   const frequencyLabels = { DAILY: "Diário", WEEKLY: "Semanal", CUSTOM: "Personalizado" };
+  const inputClass =
+    "w-full px-4 py-2 rounded-lg bg-zinc-900 border border-zinc-700 focus:outline-none focus:border-orange-500 transition";
 
   return (
     <div className="min-h-screen bg-black text-white px-4 py-8">
@@ -111,31 +161,15 @@ function Habits() {
           <form onSubmit={handleCreateHabit} className="grid gap-4 md:grid-cols-2">
             <div>
               <label className="block text-sm text-zinc-400 mb-1">Nome</label>
-              <input
-                name="name"
-                value={form.name}
-                onChange={handleFormChange}
-                required
-                className="w-full px-4 py-2 rounded-lg bg-zinc-900 border border-zinc-700 focus:outline-none focus:border-orange-500 transition"
-              />
+              <input name="name" value={form.name} onChange={handleFormChange} required className={inputClass} />
             </div>
             <div>
               <label className="block text-sm text-zinc-400 mb-1">Descrição</label>
-              <input
-                name="description"
-                value={form.description}
-                onChange={handleFormChange}
-                className="w-full px-4 py-2 rounded-lg bg-zinc-900 border border-zinc-700 focus:outline-none focus:border-orange-500 transition"
-              />
+              <input name="description" value={form.description} onChange={handleFormChange} className={inputClass} />
             </div>
             <div>
               <label className="block text-sm text-zinc-400 mb-1">Frequência</label>
-              <select
-                name="frequencyType"
-                value={form.frequencyType}
-                onChange={handleFormChange}
-                className="w-full px-4 py-2 rounded-lg bg-zinc-900 border border-zinc-700 focus:outline-none focus:border-orange-500 transition"
-              >
+              <select name="frequencyType" value={form.frequencyType} onChange={handleFormChange} className={inputClass}>
                 <option value="DAILY">Diário</option>
                 <option value="WEEKLY">Semanal</option>
                 <option value="CUSTOM">Personalizado</option>
@@ -177,40 +211,106 @@ function Habits() {
           {habits.map((habit) => (
             <li
               key={habit.id}
-              className="bg-zinc-950 border border-zinc-800 rounded-xl p-4 flex items-center justify-between gap-4"
+              className="bg-zinc-950 border border-zinc-800 rounded-xl p-4"
             >
-              <div>
-                <div className="flex items-center gap-2">
-                  <strong className="text-lg">{habit.name}</strong>
-                  <span className="text-xs px-2 py-1 rounded-full bg-zinc-900 border border-zinc-700 text-zinc-300">
-                    {frequencyLabels[habit.frequencyType]}
-                  </span>
-                  <span
-                    className={`text-xs px-2 py-1 rounded-full border ${
-                      habit.isPublic
-                        ? "bg-orange-500/10 text-orange-400 border-orange-500/30"
-                        : "bg-zinc-900 text-zinc-400 border-zinc-700"
-                    }`}
-                  >
-                    {habit.isPublic ? "Público" : "Privado"}
-                  </span>
-                </div>
-                {habit.description && (
-                  <p className="text-zinc-400 text-sm mt-1">{habit.description}</p>
-                )}
-              </div>
+              {editingId === habit.id ? (
+                <form onSubmit={handleUpdateHabit} className="grid gap-3 md:grid-cols-2">
+                  <div>
+                    <label className="block text-sm text-zinc-400 mb-1">Nome</label>
+                    <input name="name" value={editForm.name} onChange={handleEditChange} required className={inputClass} />
+                  </div>
+                  <div>
+                    <label className="block text-sm text-zinc-400 mb-1">Descrição</label>
+                    <input name="description" value={editForm.description} onChange={handleEditChange} className={inputClass} />
+                  </div>
+                  <div>
+                    <label className="block text-sm text-zinc-400 mb-1">Frequência</label>
+                    <select name="frequencyType" value={editForm.frequencyType} onChange={handleEditChange} className={inputClass}>
+                      <option value="DAILY">Diário</option>
+                      <option value="WEEKLY">Semanal</option>
+                      <option value="CUSTOM">Personalizado</option>
+                    </select>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      id={`edit-public-${habit.id}`}
+                      checked={editForm.isPublic}
+                      onChange={handleEditCheckbox}
+                      className="w-4 h-4 accent-orange-500"
+                    />
+                    <label htmlFor={`edit-public-${habit.id}`} className="text-sm text-zinc-400">
+                      Hábito público
+                    </label>
+                  </div>
+                  <div className="flex gap-3 md:col-span-2">
+                    <button
+                      type="submit"
+                      className="flex-1 py-2 bg-orange-500 hover:bg-orange-400 text-black rounded-lg font-semibold transition"
+                    >
+                      Salvar
+                    </button>
+                    <button
+                      type="button"
+                      onClick={cancelEdit}
+                      className="flex-1 py-2 bg-zinc-900 border border-zinc-700 hover:bg-zinc-800 rounded-lg transition"
+                    >
+                      Cancelar
+                    </button>
+                  </div>
+                </form>
+              ) : (
+                <div className="flex items-center justify-between gap-4">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <strong className="text-lg">{habit.name}</strong>
+                      <span className="text-xs px-2 py-1 rounded-full bg-zinc-900 border border-zinc-700 text-zinc-300">
+                        {frequencyLabels[habit.frequencyType]}
+                      </span>
+                      <span
+                        className={`text-xs px-2 py-1 rounded-full border ${
+                          habit.isPublic
+                            ? "bg-orange-500/10 text-orange-400 border-orange-500/30"
+                            : "bg-zinc-900 text-zinc-400 border-zinc-700"
+                        }`}
+                      >
+                        {habit.isPublic ? "Público" : "Privado"}
+                      </span>
+                    </div>
+                    {habit.description && (
+                      <p className="text-zinc-400 text-sm mt-1">{habit.description}</p>
+                    )}
+                  </div>
 
-              <button
-                onClick={() => handleCheckIn(habit.id)}
-                disabled={checkedToday[habit.id]}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition whitespace-nowrap ${
-                  checkedToday[habit.id]
-                    ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 cursor-default"
-                    : "bg-orange-500 hover:bg-orange-400 text-black shadow-[0_0_15px_rgba(249,115,22,0.25)]"
-                }`}
-              >
-                {checkedToday[habit.id] ? "✅ Feito hoje" : "Marcar como feito"}
-              </button>
+                  <div className="flex flex-col items-end gap-2">
+                    <button
+                      onClick={() => handleCheckIn(habit.id)}
+                      disabled={checkedToday[habit.id]}
+                      className={`px-4 py-2 rounded-lg text-sm font-medium transition whitespace-nowrap ${
+                        checkedToday[habit.id]
+                          ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 cursor-default"
+                          : "bg-orange-500 hover:bg-orange-400 text-black shadow-[0_0_15px_rgba(249,115,22,0.25)]"
+                      }`}
+                    >
+                      {checkedToday[habit.id] ? "✅ Feito hoje" : "Marcar como feito"}
+                    </button>
+                    <div className="flex gap-3 text-xs">
+                      <button
+                        onClick={() => startEdit(habit)}
+                        className="text-zinc-400 hover:text-orange-400 transition"
+                      >
+                        Editar
+                      </button>
+                      <button
+                        onClick={() => handleDelete(habit.id)}
+                        className="text-zinc-400 hover:text-red-400 transition"
+                      >
+                        Excluir
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
             </li>
           ))}
         </ul>

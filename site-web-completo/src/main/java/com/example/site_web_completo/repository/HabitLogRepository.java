@@ -12,4 +12,5 @@ import java.util.Optional;
 public interface HabitLogRepository extends JpaRepository<HabitLog, Long> {
     List<HabitLog> findByHabitId(Long habitId);
     Optional<HabitLog> findByHabitIdAndDate(Long habitId, LocalDate date);
+    void deleteByHabitId(Long habitId);
 }

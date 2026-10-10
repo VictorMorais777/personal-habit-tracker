@@ -31,5 +31,5 @@ public class Habit {
     private User user;
 
     @Column(nullable = false)
-    private boolean isPublic = false;
+    private Boolean isPublic = false;
 }

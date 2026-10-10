@@ -5,6 +5,8 @@ import com.example.site_web_completo.service.HabitService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.example.site_web_completo.model.dto.HabitUpdateRequest;
+import org.springframework.security.core.Authentication;
 
 import java.util.List;
 
@@ -33,17 +35,17 @@ public class HabitController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Habit> update(@PathVariable Long id, @RequestBody Habit habit) {
-        if (habitService.findById(id).isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        habit.setId(id);
-        return ResponseEntity.ok(habitService.save(habit));
+    public Habit update(
+            @PathVariable Long id,
+            @RequestBody HabitUpdateRequest request,
+            Authentication authentication
+    ) {
+        return habitService.update(id, authentication.getName(), request);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        habitService.delete(id);
+    public ResponseEntity<Void> delete(@PathVariable Long id, Authentication authentication) {
+        habitService.deleteOwned(id, authentication.getName());
         return ResponseEntity.noContent().build();
     }
 

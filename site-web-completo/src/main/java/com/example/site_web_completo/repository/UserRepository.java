@@ -6,8 +6,10 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 import java.util.OptionalInt;
+import java.util.List;
 
 @Repository
 public interface UserRepository extends JpaRepository <User, Long> {
     Optional<User> findByEmail(String email);
+    List<User> findByNameContainingIgnoreCase(String name);
 }

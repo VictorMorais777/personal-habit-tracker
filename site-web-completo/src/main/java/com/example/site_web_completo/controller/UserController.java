@@ -4,10 +4,11 @@ import com.example.site_web_completo.model.User;
 import com.example.site_web_completo.model.dto.ProfileUpdateRequest;
 import com.example.site_web_completo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/users")
@@ -16,44 +17,27 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping
-    public List<User> listAll() {
-        return userService.listAll();
-    }
-
     @GetMapping("/{id}")
-    public ResponseEntity<User> findById(@PathVariable Long id) {
+    public ResponseEntity<User> findById(@PathVariable Long id, Authentication authentication) {
         return userService.findById(id)
+                .filter(user -> user.getEmail().equals(authentication.getName()))
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-    @PostMapping
-    public User create(@RequestBody User user) {
-        return userService.save(user);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<User> update(@PathVariable Long id, @RequestBody User user) {
-        if (userService.findById(id).isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        user.setId(id);
-        return ResponseEntity.ok(userService.save(user));
+                .orElse(ResponseEntity.status(HttpStatus.FORBIDDEN).build());
     }
 
     @PutMapping("/{id}/profile")
-    public ResponseEntity<User> updateProfile(
+    public User updateProfile(
             @PathVariable Long id,
-            @RequestBody ProfileUpdateRequest request
+            @RequestBody ProfileUpdateRequest request,
+            Authentication authentication
     ) {
-        User updated = userService.updateProfile(id, request);
-        return ResponseEntity.ok(updated);
+        return userService.updateProfile(id, authentication.getName(), request);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        userService.delete(id);
-        return ResponseEntity.noContent().build();
+    @GetMapping("/search")
+    public List<PublicUserResponse> search(@RequestParam String q, Authentication authentication) {
+        return userService.searchByName(q, authentication.getName()).stream()
+                .map(PublicUserResponse::from)
+                .toList();
     }
 }

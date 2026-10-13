@@ -138,23 +138,31 @@ function Habits() {
   return (
     <div className="min-h-screen bg-black text-white px-4 py-8">
       <div className="max-w-3xl mx-auto">
-        <header className="flex items-center justify-between mb-8">
-          <button
-            onClick={() => navigate("/profile")}
-            className="px-4 py-2 rounded-lg bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 transition text-sm"
-          >
-            Meu Perfil
-          </button>
-          <h1 className="text-3xl font-bold">
-            🪐 Meus <span className="text-orange-500">Hábitos</span>
-          </h1>
-          <button
-            onClick={handleLogout}
-            className="px-4 py-2 rounded-lg bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 transition text-sm"
-          >
-            Sair
-          </button>
-        </header>
+       <header className="flex items-center justify-between mb-8">
+         <div className="flex gap-2">
+           <button
+             onClick={() => navigate("/profile")}
+             className="px-4 py-2 rounded-lg bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 transition text-sm"
+           >
+             Meu Perfil
+           </button>
+           <button
+             onClick={() => navigate("/friends")}
+             className="px-4 py-2 rounded-lg bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 transition text-sm"
+           >
+             Amigos
+           </button>
+         </div>
+         <h1 className="text-3xl font-bold">
+           🪐 Meus <span className="text-orange-500">Hábitos</span>
+         </h1>
+         <button
+           onClick={handleLogout}
+           className="px-4 py-2 rounded-lg bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 transition text-sm"
+         >
+           Sair
+         </button>
+       </header>
 
         <div className="bg-zinc-950 border border-zinc-800 rounded-2xl p-6 mb-8">
           <h2 className="text-lg font-semibold mb-4">Criar novo hábito</h2>

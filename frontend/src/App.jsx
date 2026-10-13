@@ -5,6 +5,7 @@ import Register from "./pages/Register";
 import Habits from "./pages/Habits";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Profile from "./pages/Profile";
+import Friends from "./pages/Friends";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/habits" element={<ProtectedRoute><Habits /></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+        <Route path="/friends" element={ <ProtectedRoute><Friends /></ProtectedRoute>}/>
       </Routes>
     </BrowserRouter>
   );

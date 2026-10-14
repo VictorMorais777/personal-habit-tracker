@@ -3,7 +3,6 @@ package com.example.site_web_completo.service;
 import com.example.site_web_completo.model.Habit;
 import com.example.site_web_completo.model.HabitLog;
 import com.example.site_web_completo.repository.HabitLogRepository;
-import com.example.site_web_completo.repository.HabitRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,29 +17,27 @@ public class HabitLogService {
     private HabitLogRepository habitLogRepository;
 
     @Autowired
-    private HabitRepository habitRepository;
+    private HabitAccessService access;
 
-    public List<HabitLog> listByHabit(Long habitId) {
+    public List<HabitLog> listByHabit(Long habitId, String requesterEmail) {
+        access.requireVisible(habitId, requesterEmail);
         return habitLogRepository.findByHabitId(habitId);
     }
 
-    public HabitLog checkIn(Long habitId, LocalDate date, boolean completed) {
-        Optional<HabitLog> existing = habitLogRepository.findByHabitIdAndDate(habitId, date);
+    public HabitLog checkIn(Long habitId, String ownerEmail, LocalDate date, boolean completed) {
+        Habit habit = access.requireOwned(habitId, ownerEmail);
 
+        Optional<HabitLog> existing = habitLogRepository.findByHabitIdAndDate(habitId, date);
         if (existing.isPresent()) {
             HabitLog log = existing.get();
             log.setCompleted(completed);
             return habitLogRepository.save(log);
         }
 
-        Habit habit = habitRepository.findById(habitId)
-                .orElseThrow(() -> new RuntimeException("Habit not found with id: " + habitId));
-
         HabitLog newLog = new HabitLog();
         newLog.setDate(date);
         newLog.setCompleted(completed);
         newLog.setHabit(habit);
-
         return habitLogRepository.save(newLog);
     }
 }

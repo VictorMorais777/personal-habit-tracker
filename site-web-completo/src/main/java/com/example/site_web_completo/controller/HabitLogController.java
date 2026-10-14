@@ -1,8 +1,9 @@
 package com.example.site_web_completo.controller;
 
-import com.example.site_web_completo.model.HabitLog;
+import com.example.site_web_completo.model.dto.HabitLogResponse;
 import com.example.site_web_completo.service.HabitLogService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -16,13 +17,21 @@ public class HabitLogController {
     private HabitLogService habitLogService;
 
     @GetMapping
-    public List<HabitLog> listByHabit(@PathVariable Long habitId) {
-        return habitLogService.listByHabit(habitId);
+    public List<HabitLogResponse> listByHabit(@PathVariable Long habitId, Authentication authentication) {
+        return habitLogService.listByHabit(habitId, authentication.getName()).stream()
+                .map(HabitLogResponse::from)
+                .toList();
     }
 
     @PostMapping
-    public HabitLog checkIn(@PathVariable Long habitId, @RequestBody CheckInRequest request) {
-        return habitLogService.checkIn(habitId, request.date(), request.completed());
+    public HabitLogResponse checkIn(
+            @PathVariable Long habitId,
+            @RequestBody CheckInRequest request,
+            Authentication authentication
+    ) {
+        return HabitLogResponse.from(
+                habitLogService.checkIn(habitId, authentication.getName(), request.date(), request.completed())
+        );
     }
 
     public record CheckInRequest(LocalDate date, boolean completed) {}

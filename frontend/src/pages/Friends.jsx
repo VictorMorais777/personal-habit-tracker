@@ -237,12 +237,22 @@ function Friends() {
             {friends.map((friendship) => (
               <li key={friendship.id} className={`${cardClass} flex items-start justify-between gap-4`}>
                 <PersonInfo user={friendship.user} />
-                <button
-                  onClick={() => handleRemove(friendship.id, true)}
-                  className="text-xs text-zinc-400 hover:text-red-400 transition whitespace-nowrap"
-                >
-                  Remover
-                </button>
+                <div className="flex flex-col items-end gap-2">
+                  <button
+                    onClick={() =>
+                      navigate(`/friends/${friendship.user.id}`, { state: { name: friendship.user.name } })
+                    }
+                    className="px-4 py-2 rounded-lg text-sm font-medium bg-orange-500 hover:bg-orange-400 text-black transition whitespace-nowrap"
+                  >
+                    Ver hábitos
+                  </button>
+                  <button
+                    onClick={() => handleRemove(friendship.id, true)}
+                    className="text-xs text-zinc-400 hover:text-red-400 transition whitespace-nowrap"
+                  >
+                    Remover
+                  </button>
+                </div>
               </li>
             ))}
           </ul>

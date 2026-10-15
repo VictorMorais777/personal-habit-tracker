@@ -63,7 +63,7 @@ function Habits() {
   async function handleCreateHabit(e) {
     e.preventDefault();
     try {
-      await api.post("/habits", { ...form, user: { id: Number(userId) } });
+      await api.post("/habits", form);
       setForm({ name: "", description: "", frequencyType: "DAILY", isPublic: false });
       loadHabits();
     } catch (err) {

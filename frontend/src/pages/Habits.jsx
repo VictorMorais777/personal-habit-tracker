@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import { getUserId, logout } from "../services/auth";
+import { todayLocal } from "../services/date";
 
 function Habits() {
   const userId = getUserId();
@@ -18,7 +19,7 @@ function Habits() {
   const [error, setError] = useState(null);
   const [checkedToday, setCheckedToday] = useState({});
 
-  const today = new Date().toISOString().split("T")[0];
+  const today = todayLocal();
 
   async function loadHabits() {
     try {

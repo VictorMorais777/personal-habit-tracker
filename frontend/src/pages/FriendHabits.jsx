@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import api from "../services/api";
+import { todayLocal } from "../services/date";
 
 function FriendHabits() {
   const { userId } = useParams();
@@ -11,7 +12,7 @@ function FriendHabits() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const today = new Date().toISOString().split("T")[0];
+  const today = todayLocal();
   const frequencyLabels = { DAILY: "Diário", WEEKLY: "Semanal", CUSTOM: "Personalizado" };
 
   useEffect(() => {

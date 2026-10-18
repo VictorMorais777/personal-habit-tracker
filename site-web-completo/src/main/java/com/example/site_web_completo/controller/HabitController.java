@@ -8,6 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import com.example.site_web_completo.model.dto.HabitStatsResponse;
+import com.example.site_web_completo.service.HabitStatsService;
+import org.springframework.format.annotation.DateTimeFormat;
+import java.time.LocalDate;
 
 import java.util.List;
 
@@ -43,5 +47,16 @@ public class HabitController {
     public ResponseEntity<Void> delete(@PathVariable Long id, Authentication authentication) {
         habitService.deleteOwned(id, authentication.getName());
         return ResponseEntity.noContent().build();
+    }
+
+    @Autowired
+    private HabitStatsService habitStatsService;
+
+    @GetMapping("/stats")
+    public List<HabitStatsResponse> stats(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate today,
+            Authentication authentication
+    ) {
+        return habitStatsService.statsFor(authentication.getName(), today);
     }
 }

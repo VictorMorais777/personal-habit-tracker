@@ -153,6 +153,12 @@ function Habits() {
            >
              Amigos
            </button>
+           <button
+             onClick={() => navigate("/stats")}
+             className="px-4 py-2 rounded-lg bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 transition text-sm"
+           >
+             Progresso
+           </button>
          </div>
          <h1 className="text-3xl font-bold">
            🪐 Meus <span className="text-orange-500">Hábitos</span>

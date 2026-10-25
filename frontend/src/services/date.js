@@ -24,3 +24,12 @@ export function formatShort(iso) {
   const [, month, day] = iso.split("-");
   return `${day}/${month}`;
 }
+
+export function weekStart(iso) {
+  const diff = (parseLocal(iso).getDay() + 6) % 7;
+  return addDays(iso, -diff);
+}
+
+export function isoWeekday(iso) {
+  return ((parseLocal(iso).getDay() + 6) % 7) + 1;
+}

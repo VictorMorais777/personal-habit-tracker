@@ -2,7 +2,7 @@ package com.example.site_web_completo.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
-
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -23,8 +23,10 @@ public class Habit {
     @Column(nullable = false)
     private FrequencyType frequencyType;
 
-    @ElementCollection
-    private Set<Integer> weekDays;
+    private Integer timesPerWeek;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    private Set<Integer> weekDays = new HashSet<>();
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)

@@ -3,17 +3,14 @@ import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import { getUserId, logout } from "../services/auth";
 import { todayLocal } from "../services/date";
+import { describeGoal, buildPayload, emptyHabitForm, goalError } from "../services/goal";
+import FrequencyFields from "../components/FrequencyFields";
 
 function Habits() {
   const userId = getUserId();
   const navigate = useNavigate();
   const [habits, setHabits] = useState([]);
-  const [form, setForm] = useState({
-    name: "",
-    description: "",
-    frequencyType: "DAILY",
-    isPublic: false,
-  });
+  const [form, setForm] = useState(emptyHabitForm);
   const [editingId, setEditingId] = useState(null);
   const [editForm, setEditForm] = useState(null);
   const [error, setError] = useState(null);
@@ -57,15 +54,25 @@ function Habits() {
     setForm({ ...form, [e.target.name]: e.target.value });
   }
 
+  function mergeForm(patch) {
+    setForm({ ...form, ...patch });
+  }
+
   function handleCheckboxChange(e) {
     setForm({ ...form, isPublic: e.target.checked });
   }
 
   async function handleCreateHabit(e) {
     e.preventDefault();
+    const problem = goalError(form);
+    if (problem) {
+      setError(problem);
+      return;
+    }
     try {
-      await api.post("/habits", form);
-      setForm({ name: "", description: "", frequencyType: "DAILY", isPublic: false });
+      await api.post("/habits", buildPayload(form));
+      setForm(emptyHabitForm);
+      setError(null);
       loadHabits();
     } catch (err) {
       setError(err.response?.data?.message || err.message);
@@ -77,8 +84,10 @@ function Habits() {
     setEditForm({
       name: habit.name,
       description: habit.description || "",
-      frequencyType: habit.frequencyType,
       isPublic: !!habit.isPublic,
+      frequencyType: habit.frequencyType,
+      timesPerWeek: habit.timesPerWeek || 3,
+      weekDays: habit.weekDays || [],
     });
   }
 
@@ -91,15 +100,25 @@ function Habits() {
     setEditForm({ ...editForm, [e.target.name]: e.target.value });
   }
 
+  function mergeEdit(patch) {
+    setEditForm({ ...editForm, ...patch });
+  }
+
   function handleEditCheckbox(e) {
     setEditForm({ ...editForm, isPublic: e.target.checked });
   }
 
   async function handleUpdateHabit(e) {
     e.preventDefault();
+    const problem = goalError(editForm);
+    if (problem) {
+      setError(problem);
+      return;
+    }
     try {
-      await api.put(`/habits/${editingId}`, editForm);
+      await api.put(`/habits/${editingId}`, buildPayload(editForm));
       cancelEdit();
+      setError(null);
       loadHabits();
     } catch (err) {
       setError(err.response?.data?.message || err.message);
@@ -132,44 +151,33 @@ function Habits() {
     navigate("/login");
   }
 
-  const frequencyLabels = { DAILY: "Diário", WEEKLY: "Semanal", CUSTOM: "Personalizado" };
   const inputClass =
     "w-full px-4 py-2 rounded-lg bg-zinc-900 border border-zinc-700 focus:outline-none focus:border-orange-500 transition";
+  const navButtonClass =
+    "px-4 py-2 rounded-lg bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 transition text-sm";
 
   return (
     <div className="min-h-screen bg-black text-white px-4 py-8">
       <div className="max-w-3xl mx-auto">
-       <header className="flex items-center justify-between mb-8">
-         <div className="flex gap-2">
-           <button
-             onClick={() => navigate("/profile")}
-             className="px-4 py-2 rounded-lg bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 transition text-sm"
-           >
-             Meu Perfil
-           </button>
-           <button
-             onClick={() => navigate("/friends")}
-             className="px-4 py-2 rounded-lg bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 transition text-sm"
-           >
-             Amigos
-           </button>
-           <button
-             onClick={() => navigate("/stats")}
-             className="px-4 py-2 rounded-lg bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 transition text-sm"
-           >
-             Progresso
-           </button>
-         </div>
-         <h1 className="text-3xl font-bold">
-           🪐 Meus <span className="text-orange-500">Hábitos</span>
-         </h1>
-         <button
-           onClick={handleLogout}
-           className="px-4 py-2 rounded-lg bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 transition text-sm"
-         >
-           Sair
-         </button>
-       </header>
+        <header className="flex items-center justify-between mb-8">
+          <div className="flex gap-2">
+            <button onClick={() => navigate("/profile")} className={navButtonClass}>
+              Meu Perfil
+            </button>
+            <button onClick={() => navigate("/friends")} className={navButtonClass}>
+              Amigos
+            </button>
+            <button onClick={() => navigate("/stats")} className={navButtonClass}>
+              Progresso
+            </button>
+          </div>
+          <h1 className="text-3xl font-bold">
+            🪐 Meus <span className="text-orange-500">Hábitos</span>
+          </h1>
+          <button onClick={handleLogout} className={navButtonClass}>
+            Sair
+          </button>
+        </header>
 
         <div className="bg-zinc-950 border border-zinc-800 rounded-2xl p-6 mb-8">
           <h2 className="text-lg font-semibold mb-4">Criar novo hábito</h2>
@@ -182,14 +190,8 @@ function Habits() {
               <label className="block text-sm text-zinc-400 mb-1">Descrição</label>
               <input name="description" value={form.description} onChange={handleFormChange} className={inputClass} />
             </div>
-            <div>
-              <label className="block text-sm text-zinc-400 mb-1">Frequência</label>
-              <select name="frequencyType" value={form.frequencyType} onChange={handleFormChange} className={inputClass}>
-                <option value="DAILY">Diário</option>
-                <option value="WEEKLY">Semanal</option>
-                <option value="CUSTOM">Personalizado</option>
-              </select>
-            </div>
+
+            <FrequencyFields goal={form} onChange={mergeForm} inputClass={inputClass} />
 
             <div className="flex items-center gap-2">
               <input
@@ -238,14 +240,9 @@ function Habits() {
                     <label className="block text-sm text-zinc-400 mb-1">Descrição</label>
                     <input name="description" value={editForm.description} onChange={handleEditChange} className={inputClass} />
                   </div>
-                  <div>
-                    <label className="block text-sm text-zinc-400 mb-1">Frequência</label>
-                    <select name="frequencyType" value={editForm.frequencyType} onChange={handleEditChange} className={inputClass}>
-                      <option value="DAILY">Diário</option>
-                      <option value="WEEKLY">Semanal</option>
-                      <option value="CUSTOM">Personalizado</option>
-                    </select>
-                  </div>
+
+                  <FrequencyFields goal={editForm} onChange={mergeEdit} inputClass={inputClass} />
+
                   <div className="flex items-center gap-2">
                     <input
                       type="checkbox"
@@ -277,10 +274,10 @@ function Habits() {
               ) : (
                 <div className="flex items-center justify-between gap-4">
                   <div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-2">
                       <strong className="text-lg">{habit.name}</strong>
                       <span className="text-xs px-2 py-1 rounded-full bg-zinc-900 border border-zinc-700 text-zinc-300">
-                        {frequencyLabels[habit.frequencyType]}
+                        {describeGoal(habit)}
                       </span>
                       <span
                         className={`text-xs px-2 py-1 rounded-full border ${

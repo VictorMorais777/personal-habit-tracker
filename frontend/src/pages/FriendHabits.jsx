@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import api from "../services/api";
 import { todayLocal } from "../services/date";
+import { describeGoal } from "../services/goal";
 
 function FriendHabits() {
   const { userId } = useParams();

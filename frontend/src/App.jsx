@@ -8,6 +8,8 @@ import Profile from "./pages/Profile";
 import Friends from "./pages/Friends";
 import FriendHabits from "./pages/FriendHabits";
 import Stats from "./pages/Stats";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 
 function App() {
   return (
@@ -21,6 +23,8 @@ function App() {
         <Route path="/friends" element={<ProtectedRoute><Friends /></ProtectedRoute>}/>
         <Route path="/friends/:userId" element={<ProtectedRoute><FriendHabits /></ProtectedRoute>}/>
         <Route path="/stats" element={<ProtectedRoute><Stats /></ProtectedRoute>}/>
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
       </Routes>
     </BrowserRouter>
   );

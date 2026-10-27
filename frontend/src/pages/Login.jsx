@@ -56,6 +56,12 @@ function Login() {
             />
           </div>
 
+          <div className="text-right">
+            <Link to="/forgot-password" className="text-sm text-orange-500 hover:underline">
+              Esqueci minha senha
+            </Link>
+          </div>
+
           <button
             type="submit"
             className="w-full py-2 bg-orange-500 hover:bg-orange-400 text-black rounded-lg font-semibold transition shadow-[0_0_20px_rgba(249,115,22,0.3)]"

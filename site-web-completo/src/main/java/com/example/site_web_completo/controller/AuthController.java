@@ -2,18 +2,23 @@ package com.example.site_web_completo.controller;
 
 import com.example.site_web_completo.config.JwtUtil;
 import com.example.site_web_completo.model.User;
+import com.example.site_web_completo.service.PasswordPolicy;
 import com.example.site_web_completo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
+
+    private static final Pattern EMAIL_PATTERN = Pattern.compile("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$");
 
     @Autowired
     private UserService userService;
@@ -25,12 +30,32 @@ public class AuthController {
     private JwtUtil jwtUtil;
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody User user) {
-        if (userService.findByEmail(user.getEmail()).isPresent()) {
-            return ResponseEntity.badRequest().body(Map.of("message", "Email já cadastrado"));
+    public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
+        String name = request.name() == null ? "" : request.name().trim();
+        String email = request.email() == null ? "" : request.email().trim();
+
+        if (name.isEmpty()) {
+            return badRequest("Informe seu nome.");
+        }
+        if (!EMAIL_PATTERN.matcher(email).matches()) {
+            return badRequest("Informe um email válido.");
+        }
+        String passwordProblem = PasswordPolicy.validate(request.password());
+        if (passwordProblem != null) {
+            return badRequest(passwordProblem);
+        }
+        if (userService.findByEmail(email).isPresent()) {
+            return badRequest("Email já cadastrado");
         }
 
-        User savedUser = userService.register(user);
+        User savedUser;
+        try {
+            savedUser = userService.register(name, email, request.password());
+        } catch (DataIntegrityViolationException e) {
+            // dois cadastros simultâneos com o mesmo email: o banco barra o segundo
+            return badRequest("Email já cadastrado");
+        }
+
         String token = jwtUtil.generateToken(savedUser.getEmail());
 
         return ResponseEntity.ok(Map.of(
@@ -62,6 +87,12 @@ public class AuthController {
                 "name", user.getName()
         ));
     }
+
+    private ResponseEntity<Map<String, String>> badRequest(String message) {
+        return ResponseEntity.badRequest().body(Map.of("message", message));
+    }
+
+    public record RegisterRequest(String name, String email, String password) {}
 
     public record LoginRequest(String email, String password) {}
 }

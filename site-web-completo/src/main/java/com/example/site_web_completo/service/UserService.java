@@ -33,8 +33,11 @@ public class UserService {
         return userRepository.findByEmail(email);
     }
 
-    public User register(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+    public User register(String name, String email, String rawPassword) {
+        User user = new User();
+        user.setName(name);
+        user.setEmail(email);
+        user.setPassword(passwordEncoder.encode(rawPassword));
         return userRepository.save(user);
     }
 

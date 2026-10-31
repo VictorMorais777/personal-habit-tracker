@@ -66,8 +66,9 @@ public class PasswordResetService {
 
     @Transactional
     public void resetPassword(String rawToken, String newPassword) {
-        if (newPassword == null || newPassword.length() < MIN_PASSWORD_LENGTH) {
-            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Password too short");
+        String passwordProblem = PasswordPolicy.validate(newPassword);
+        if (passwordProblem != null) {
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, passwordProblem);
         }
 
         PasswordResetToken token = tokenRepository.findByTokenHash(hash(rawToken == null ? "" : rawToken))

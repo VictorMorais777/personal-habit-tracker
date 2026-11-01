@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 function LandingPage() {
   return (
     <div className="min-h-screen bg-black text-white">
-      <header className="flex items-center justify-between px-8 py-6 max-w-6xl mx-auto">
+      <header className="glass-bar sticky top-4 z-40 flex items-center justify-between px-6 py-3 max-w-6xl mx-auto mt-4">
         <h1 className="text-2xl font-bold">
           🪐 Saturn <span className="text-orange-500">Habit Tracker</span>
         </h1>

@@ -16,6 +16,11 @@ function Register() {
     e.preventDefault();
     setError(null);
 
+    if (form.password.length < 8) {
+      setError("A senha precisa ter pelo menos 8 caracteres.");
+      return;
+    }
+
     try {
       const response = await api.post("/auth/register", form);
       saveAuth(response.data);
@@ -62,8 +67,11 @@ function Register() {
               value={form.password}
               onChange={handleChange}
               required
+              minLength={8}
+              maxLength={72}
               className="w-full px-4 py-2 rounded-lg bg-zinc-900 border border-zinc-700 focus:outline-none focus:border-orange-500 transition"
             />
+            <p className="text-xs text-zinc-500 mt-1">Mínimo de 8 caracteres.</p>
           </div>
 
           <button

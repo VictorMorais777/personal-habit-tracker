@@ -133,9 +133,9 @@ function Stats() {
               <div className="h-64">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={weeklyData}>
-                    <CartesianGrid stroke="#27272a" vertical={false} />
-                    <XAxis dataKey="label" stroke="#71717a" fontSize={12} />
-                    <YAxis stroke="#71717a" fontSize={12} allowDecimals={false} />
+                    <CartesianGrid stroke="var(--chart-grid)" vertical={false} />
+                    <XAxis dataKey="label" stroke="var(--chart-axis)" fontSize={12} />
+                    <YAxis stroke="var(--chart-axis)" fontSize={12} allowDecimals={false} />
                     <Tooltip
                       contentStyle={{
                         background: "#09090b",

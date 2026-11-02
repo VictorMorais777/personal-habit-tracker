@@ -65,22 +65,22 @@ function Profile() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white px-4 py-8">
+    <div className="min-h-screen px-4 py-8">
       <div className="max-w-2xl mx-auto">
-        <header className="flex items-center justify-between mb-8">
+        <header className="glass-bar sticky top-4 z-40 flex items-center justify-between gap-2 px-4 py-3 mb-8">
           <h1 className="text-3xl font-bold">
             🪐 Meu <span className="text-orange-500">Perfil</span>
           </h1>
           <div className="flex gap-3">
             <button
               onClick={() => navigate("/habits")}
-              className="px-4 py-2 rounded-lg bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 transition text-sm"
+              className="px-4 py-2 rounded-lg glass transition text-sm"
             >
               Meus Hábitos
             </button>
             <button
               onClick={handleLogout}
-              className="px-4 py-2 rounded-lg bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 transition text-sm"
+              className="px-4 py-2 rounded-lg glass transition text-sm"
             >
               Sair
             </button>
@@ -89,7 +89,7 @@ function Profile() {
 
         {userName && (
           <p className="text-zinc-400 mb-6">
-            Logado como <span className="text-white font-semibold">{userName}</span>
+            Logado como <span className="text-(--ink) font-semibold">{userName}</span>
           </p>
         )}
 

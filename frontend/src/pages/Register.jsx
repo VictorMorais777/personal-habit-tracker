@@ -31,7 +31,7 @@ function Register() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white flex items-center justify-center px-4">
+    <div className="min-h-screen flex items-center justify-center px-4">
       <div className="w-full max-w-md bg-zinc-950 border border-zinc-800 rounded-2xl p-8">
         <h1 className="text-2xl font-bold mb-6 text-center">
           Criar conta no <span className="text-orange-500">Saturn</span>

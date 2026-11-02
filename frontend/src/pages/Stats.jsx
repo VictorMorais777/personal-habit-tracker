@@ -89,12 +89,12 @@ function Stats() {
   const totalCheckins = stats.reduce((sum, habit) => sum + habit.totalCompleted, 0);
 
   return (
-    <div className="min-h-screen bg-black text-white px-4 py-8">
+    <div className="min-h-screen px-4 py-8">
       <div className="max-w-3xl mx-auto">
-        <header className="flex items-center justify-between mb-8">
+        <header className="glass-bar sticky top-4 z-40 flex items-center justify-between gap-2 px-4 py-3 mb-8">
           <button
             onClick={() => navigate("/habits")}
-            className="px-4 py-2 rounded-lg bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 transition text-sm"
+            className="px-4 py-2 rounded-lg glass transition text-sm"
           >
             Meus Hábitos
           </button>

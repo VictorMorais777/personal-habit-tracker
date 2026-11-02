@@ -47,7 +47,7 @@ function ResetPassword() {
     "w-full px-4 py-2 rounded-lg bg-zinc-900 border border-zinc-700 focus:outline-none focus:border-orange-500 transition";
 
   return (
-    <div className="min-h-screen bg-black text-white flex items-center justify-center px-4">
+    <div className="min-h-screen flex items-center justify-center px-4">
       <div className="w-full max-w-md bg-zinc-950 border border-zinc-800 rounded-2xl p-8">
         <h1 className="text-2xl font-bold mb-6 text-center">
           Nova <span className="text-orange-500">senha</span>

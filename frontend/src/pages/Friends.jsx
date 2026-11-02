@@ -138,13 +138,13 @@ function Friends() {
   }
 
   const buttonClass =
-    "px-4 py-2 rounded-lg bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 transition text-sm";
+    "px-4 py-2 rounded-lg glass transition text-sm";
   const cardClass = "bg-zinc-950 border border-zinc-800 rounded-xl p-4";
 
   return (
-    <div className="min-h-screen bg-black text-white px-4 py-8">
+    <div className="min-h-screen px-4 py-8">
       <div className="max-w-3xl mx-auto">
-        <header className="flex items-center justify-between mb-8">
+        <header className="glass-bar sticky top-4 z-40 flex items-center justify-between gap-2 px-4 py-3 mb-8">
           <button onClick={() => navigate("/habits")} className={buttonClass}>
             Meus Hábitos
           </button>
@@ -218,7 +218,7 @@ function Friends() {
                   </button>
                   <button
                     onClick={() => handleRemove(request.id, false)}
-                    className="px-4 py-2 rounded-lg text-sm bg-zinc-900 border border-zinc-700 hover:bg-zinc-800 transition"
+                    className="px-4 py-2 rounded-lg text-sm glass transition"
                   >
                     Recusar
                   </button>

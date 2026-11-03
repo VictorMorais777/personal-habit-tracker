@@ -138,10 +138,12 @@ function Stats() {
                     <YAxis stroke="var(--chart-axis)" fontSize={12} allowDecimals={false} />
                     <Tooltip
                       contentStyle={{
-                        background: "#09090b",
-                        border: "1px solid #27272a",
+                        background: "var(--tooltip-bg)",
+                        border: "1px solid var(--tooltip-border)",
                         borderRadius: 8,
+                        color: "var(--ink)",
                       }}
+                      labelStyle={{ color: "var(--ink)" }}
                       cursor={{ fill: "rgba(249,115,22,0.1)" }}
                       formatter={(value) => [value, "Check-ins"]}
                       labelFormatter={(label) => `Semana de ${label}`}

@@ -34,4 +34,5 @@ public class User {
     private String twitterUrl;
     private String linkedinUrl;
     private String githubUrl;
+    private Long photoVersion;
 }

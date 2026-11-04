@@ -11,7 +11,7 @@ public record PublicUserResponse(
         String instagramUrl,
         String twitterUrl,
         String linkedinUrl,
-        String githubUrl
+        Long photoVersion
 ) {
     public static PublicUserResponse from(User user) {
         return new PublicUserResponse(
@@ -23,7 +23,7 @@ public record PublicUserResponse(
                 user.getInstagramUrl(),
                 user.getTwitterUrl(),
                 user.getLinkedinUrl(),
-                user.getGithubUrl()
+                user.getPhotoVersion()
         );
     }
 }

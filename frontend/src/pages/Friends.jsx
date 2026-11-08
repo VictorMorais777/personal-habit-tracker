@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import { logout } from "../services/auth";
+import Avatar from "../components/Avatar";
 
 function describeError(err) {
   const status = err.response?.status;
@@ -40,16 +41,18 @@ function SocialLinks({ user }) {
 
 function PersonInfo({ user }) {
   return (
-    <div>
-      <strong className="text-lg">{user.name}</strong>
-      {user.location && <span className="text-xs text-zinc-500 ml-2">{user.location}</span>}
-      {user.mainGoal && <p className="text-sm text-orange-400 mt-1">🎯 {user.mainGoal}</p>}
-      {user.bio && <p className="text-zinc-400 text-sm mt-1">{user.bio}</p>}
-      <SocialLinks user={user} />
+    <div className="flex items-start gap-3">
+      <Avatar userId={user.id} name={user.name} photoVersion={user.photoVersion} />
+      <div>
+        <strong className="text-lg">{user.name}</strong>
+        {user.location && <span className="text-xs text-zinc-500 ml-2">{user.location}</span>}
+        {user.mainGoal && <p className="text-sm text-orange-400 mt-1">🎯 {user.mainGoal}</p>}
+        {user.bio && <p className="text-zinc-400 text-sm mt-1">{user.bio}</p>}
+        <SocialLinks user={user} />
+      </div>
     </div>
   );
 }
-
 function Friends() {
   const navigate = useNavigate();
   const [query, setQuery] = useState("");

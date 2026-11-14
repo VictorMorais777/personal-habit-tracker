@@ -170,6 +170,9 @@ function Habits() {
             <button onClick={() => navigate("/stats")} className={navButtonClass}>
               Progresso
             </button>
+            <button onClick={() => navigate("/assistant")} className={navButtonClass}>
+              Assistente
+            </button>
           </div>
           <h1 className="text-3xl font-bold">
             🪐 Meus <span className="text-orange-500">Hábitos</span>

@@ -37,4 +37,11 @@ public class AiQuotaService {
         }
         return dailyLimit - used;
     }
+
+    public void refund(Long userId) {
+        AtomicInteger used = usage.get(userId + ":" + LocalDate.now());
+        if (used != null) {
+            used.updateAndGet(value -> Math.max(0, value - 1));
+        }
+    }
 }

@@ -123,7 +123,7 @@ public class AiAssistantService {
                 """.formatted(data);
 
         int remaining = quota.consume(user.getId());
-        String json = gemini.generate(SYSTEM_PROMPT, prompt, 1500, SUGGESTION_SCHEMA);
+        String json = generateOrRefund(user.getId(), prompt, 1500, SUGGESTION_SCHEMA);
         return new SuggestionsResponse(parseSuggestions(json, habits), remaining);
     }
 
@@ -168,7 +168,7 @@ public class AiAssistantService {
                 """.formatted(data);
 
         int remaining = quota.consume(user.getId());
-        String text = gemini.generate(SYSTEM_PROMPT, prompt, 800, null);
+        String text = generateOrRefund(user.getId(), prompt, 800, null);
         return new SummaryResponse(text.length() > 1500 ? text.substring(0, 1500) : text, remaining);
     }
 

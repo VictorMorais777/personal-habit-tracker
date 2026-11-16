@@ -270,4 +270,15 @@ public class AiAssistantService {
     private String orNone(String text) {
         return text.isEmpty() ? "(não informado)" : text;
     }
+
+    private String generateOrRefund(Long userId, String prompt, int maxTokens, Map<String, Object> schema) {
+        try {
+            return gemini.generate(SYSTEM_PROMPT, prompt, maxTokens, schema);
+        } catch (ResponseStatusException e) {
+            if (e.getStatusCode().value() == HttpStatus.SERVICE_UNAVAILABLE.value()) {
+                quota.refund(userId);
+            }
+            throw e;
+        }
+    }
 }
